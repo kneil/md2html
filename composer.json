@@ -2,6 +2,7 @@
     "require": {
         "symfony/console": "^4.0",
         "league/commonmark": "^0.17.0",
-        "phpunit/phpunit": "^7.0"
+        "phpunit/phpunit": "^7.0",
+        "monolog/monolog": "^1.23"
     }
 }

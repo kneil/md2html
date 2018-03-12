@@ -2,18 +2,37 @@
 
 namespace LinkMaker;
 
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
+
 use League\CommonMark\CommonMarkConverter;
+use Psr\Log\LoggerInterface;
+use LinkMaker\File;
 
 /**
  * class that handles conversion from Markdown to html
  */
 class Md2HtmlCommand
 {
-	/**
+
+	protected $fileManager;
+
+	/*
 	 * @param string $inputfile
 	 * @param string $outputfile
 	 */
-	function execute($inputfile, $outputfile){
+	function execute($inputfile, $outputfile, $fileManager="LinkMaker\File"){
+
+	  // we'd need additional logic to use S3 etc but the methods would 
+	  // still be getFileContents and putFileContents;
+
+
+	$log = new Logger('logger');
+	$log->pushHandler(new StreamHandler(__DIR__.'/../logs/events.log', Logger::DEBUG));
+	$log->addInfo('Starting the app.');
+
+	  $this->fileManager = new $fileManager();
 
 		$errors = false;
 	 	// main command functionality
@@ -22,7 +41,7 @@ class Md2HtmlCommand
 
 	  $html="";
 	  try {
-	      $html = $converter->convertToHtml(file_get_contents($inputfile));
+	      $html = $converter->convertToHtml($this->fileManager->getFileContents($inputfile));
 	  }
 	  catch ( \Exception $e ) {
 				$errors = true;
@@ -30,7 +49,7 @@ class Md2HtmlCommand
 	  }
 
 	  try {
-	      file_put_contents($outputfile, $html);
+	      $this->fileManager->putFileContents($outputfile, $html);
 	  }
 	  catch ( \Exception $e ) {
 				$errors=true;

@@ -3,6 +3,7 @@
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../util/Md2HtmlCommand.php';
 require __DIR__ . '/../util/functions.php';
+require __DIR__.'/../util/File.php';
 
 use LinkMaker\Md2HtmlCommand;
   
