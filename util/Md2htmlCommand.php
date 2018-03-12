@@ -28,14 +28,14 @@ class Md2HtmlCommand
 	  // still be getFileContents and putFileContents;
 
 
-	$log = new Logger('logger');
-	$log->pushHandler(new StreamHandler(__DIR__.'/../logs/events.log', Logger::DEBUG));
-	$log->addInfo('Starting the app.');
+	  $log = new Logger('logger');
+	  $log->pushHandler(new StreamHandler(__DIR__.'/../logs/events.log', Logger::DEBUG));
+	  $log->addInfo('Starting the app.');
 
 	  $this->fileManager = new $fileManager();
 
-		$errors = false;
-	 	// main command functionality
+	  $errors = false;
+	  // main command functionality
 	  $converter = new CommonMarkConverter();
 	  \setupErrorHandler();
 
@@ -44,7 +44,8 @@ class Md2HtmlCommand
 	      $html = $converter->convertToHtml($this->fileManager->getFileContents($inputfile));
 	  }
 	  catch ( \Exception $e ) {
-				$errors = true;
+	      $errors = true;
+	      $log->addError('Error getting file contents.'); 
 	      return \outputError($e);
 	  }
 
@@ -52,17 +53,18 @@ class Md2HtmlCommand
 	      $this->fileManager->putFileContents($outputfile, $html);
 	  }
 	  catch ( \Exception $e ) {
-				$errors=true;
+  	      $log->addError('Error writing to file.');
+	      $errors=true;
 	      return \outputError($e);
 	  }
 	  if ( $html == "" && $outputfile != "php://stdout"){
 	    $this->warningNoContent();
 	  }
-		else {
-			if ( $outputfile != "php://stdout" && $errors === false ){
-				$this->success();
-			}
-		}
+	  else {
+	    if ( $outputfile != "php://stdout" && $errors === false ){
+	      $this->success();
+	     }
+	  }
 	  restore_error_handler();
 
 	}
