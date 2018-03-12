@@ -1,0 +1,29 @@
+#!/usr/bin/env php
+<?php
+require __DIR__.'/../vendor/autoload.php';
+require __DIR__.'/../util/functions.php';
+require __DIR__.'/../util/Md2HtmlCommand.php';
+
+use LinkMaker\MdHtmlCommand;
+
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+
+(new Application('md2html', '1.0.0'))
+  ->register('convert')
+      ->addOption('in', null, InputOption::VALUE_REQUIRED, "Input file")
+      ->addOption('out', null, InputOption::VALUE_REQUIRED, "Output file")
+      ->setCode(function(InputInterface $input, OutputInterface $output) {
+        // main command functionality
+        $inputfile = $input->getOption('in') ? $input->getOption('in') : "php://stdin";
+	      $outputfile = $input->getOption('out') ? $input->getOption('out') : "php://stdout";
+        $command = new LinkMaker\Md2HtmlCommand();
+        $command->execute($inputfile, $outputfile);
+
+      })
+  ->getApplication()
+  ->setDefaultCommand('convert', true) // Single command application
+  ->run();
